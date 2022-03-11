@@ -12,7 +12,6 @@
 *
 * Todos serão "filhos" de "número" na árvore de herança
 * ********************************************************************/
-#include  <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include "numero.h"
