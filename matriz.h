@@ -21,7 +21,7 @@ struct Matriz_Interface_st;
  * b) os atributos (valores) numéricos do Matriz_t          *
  *     (FINALMENTE  !!!!   :)                                  *
  * ------------------------------------------------------------*/
- struct MeuDouble_st {
+ struct Matriz_st {
     struct Numero_st super; 
                      /* <== herda a "super-classe Numeros", 
                       * isto é, a classe superior a MeuDouble na 
@@ -40,54 +40,42 @@ struct Matriz_Interface_st;
                        * saída               */
                      
     /* o atributo  desta classe */
-    unsigned int *tam;
-    double **mat;
+    unsigned int * tam;
+    double ** mat;
 }  ;
 /* ----------------------------------------------------------*
  * declaro o ponteiro para o número do tipo Matriz_t      *
  * que não estão "dentro" da tabela de funções virtuais      *
  * ----------------------------------------------------------*/
-typedef struct Matriz_st *Matriz_pt;
+typedef struct Matriz_st * Matriz_pt;
 typedef struct Matriz_st  Matriz_t;
-
-
 
 struct Matriz_Interface_st {
     Matriz_pt (*resize) (Matriz_pt const * const me, unsigned int *tam);
-
     Matriz_pt (*ones) (Matriz_pt const * const me, unsigned int *tam);
-
     Matriz_pt (*identidade) (Matriz_pt const * const me, unsigned int *tam);
-
     Matriz_pt (*multip_escalar) (Matriz_pt const * const me, double escalar);
-
     Matriz_pt (*dot) (Matriz_pt const * const me, Matriz_pt const * const outro);
 
     /*------------------ Outras funções ------------------------------------*/
+
     Matriz_pt (*transpor) (Matriz_pt const * const me);
-
     Matriz_pt (*transpor_diag2) (Matriz_pt const * const me);
-
     Matriz_pt (*reverse_horizontal) (Matriz_pt const * const me);
-
     Matriz_pt (*reverse_vertical) (Matriz_pt const * const me);
-
     Matriz_pt (*acrescenta_linha) (Matriz_pt const * const me);
-
     Matriz_pt (*acrescenta_coluna) (Matriz_pt const * const me);
 
     /*-----------------------------------------------------------------------*/
-    char *      (*imprime)  (Matriz_t const * const  me);
-    
-    void        (*destroi)  (Matriz_t       *        me);
-							 
-    
+
+    char * (*imprime)  (Matriz_t const * const  me);
+    void   (*destroi)  (Matriz_t * me);
 };
 
 typedef struct Matriz_Interface_st *Matriz_Interface_pt;
 
 
 /* protótipo do construtor   */
-Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
+Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int tam[], double mat[]);
 
 #endif /* MATRIZ_H */

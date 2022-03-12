@@ -1,15 +1,15 @@
 prog: clean main.o
-	gcc -o prog main.o numero.o meu_racional.o
+	gcc -o prog main.o numero.o matriz.o
 	./prog
 
-main.o: numero.o meu_racional.o
+main.o: numero.o matriz.o
 	gcc -c main.c
 
 numero.o: 
 	gcc -c numero.c
 
-meu_racional:
-	gcc -c meu_racional.c
+matriz:
+	gcc -c matriz.c
 
 clean:
 	rm -rf *.o *~ prog

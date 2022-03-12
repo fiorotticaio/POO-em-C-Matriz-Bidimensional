@@ -123,8 +123,7 @@ void Destroi_ (Matriz_t * me);
  /*---------------------------------------------*
  * implementação do construtor                  *
  * ---------------------------------------------*/
-Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
-{
+Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int tam[], double mat[]) {
 	/* tabela de funções virtuais da classe Numero_t *
 	* Esta tabela estática será compartilhada por todos os números *
 	* da classe Matriz_t                                        */
@@ -133,7 +132,7 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
 		&Matriz_resize_,
 		&Matriz_ones_,
 		&Matriz_identidade_,
-		&Matriz_multip_escalar,
+		&Matriz_multip_escalar_,
 		&Matriz_dot_,
 		&Matriz_transpor_,
 		&Matriz_transpor_diag2_,
@@ -146,13 +145,13 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
 	};
 
 	me = (Matriz_pt) Num_constroi ((Numero_pt) me);
-	/*constroi o Numero_t  */
+	/* constroi o Numero_t  	*/
 	/* no início de Matriz_t  */
 
 	me->super.metodo = &vtbl;
-	/* as operações do "numero", a partir de agora,     */
-	/* são as operações sobre matrizes                    */
-	/* metodo aponta para vtbl de Matriz_t */
+	/* as operações do "numero", a partir de agora, */
+	/* são as operações sobre matrizes              */
+	/* metodo aponta para vtbl de Matriz_t 					*/
 
 	/* Agora, mais uma tabela estática a ser compartilhada pelos     *
 	* "Matriz_t": a tabela de interface                          */
@@ -201,7 +200,8 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
 		exit (1);
 	}
 
-	for (int i = 0; i < tam[0]; i++) {
+	int i;
+	for (i = 0; i < tam[0]; i++) {
 		me->mat[i] = (double *) malloc (tam[1]*sizeof(double));
 		if (me->mat[i] == NULL)
 		{	/*erro!!! não conseguiu alocar */
@@ -211,7 +211,19 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
 		}
 	}
 
-	me->mat = mat;
+	int j, k=0;
+
+	double * matrizValores[tam[0]][tam[1]];
+	for(i=0;i<tam[0];i++){
+		double linha[tam[0]];
+		for(j=0;j<tam[1];j++){
+			linha[j] = mat[k];
+			k++;
+		}
+		matrizValores[i][j] = &linha;
+	}
+
+	me->mat = &matrizValores;
 
 	return (me);
 }
@@ -221,139 +233,95 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int *tam, double **mat);
 /*----------------------------------------------------*
  * IMPLEMENTAÇÃO DAS FUNÇÕES VIRTUAIS           *
  * -----------------------------------------------------*/
-static inline
-Matriz_pt Resize_ (Matriz_pt const * const  me,  unsigned int *tam)
-{
+static inline Matriz_pt Resize_ (Matriz_pt const * const  me,  unsigned int *tam) {
 	return ((Matriz_pt) Matriz_resize_ ((Numero_pt) me, tam));
 }
 
-static inline
-Numero_pt Matriz_resize_ (Numero_t const * const  me,  unsigned int *tam)
-{
+static inline Numero_pt Matriz_resize_ (Numero_t const * const  me,  unsigned int *tam) {
 	// resize
 }
 
-static inline
-Matriz_pt Ones_ (Matriz_pt const * const  me, unsigned int *tam)
-{
+static inline Matriz_pt Ones_ (Matriz_pt const * const  me, unsigned int *tam) {
 	return ((Matriz_pt) Matriz_ones_ ((Numero_pt) me, tam));
 }
 
-static inline
-Numero_pt Matriz_ones_ (Numero_t const * const  me, unsigned int *tam)
-{
+static inline Numero_pt Matriz_ones_ (Numero_t const * const  me, unsigned int *tam) {
 	// ones
 }
 
-static inline
-Matriz_pt Identidade_ (Matriz_pt const * const  me, unsigned int *tam)
-{
+static inline Matriz_pt Identidade_ (Matriz_pt const * const  me, unsigned int *tam) {
 	return ((Matriz_pt) Matriz_identidade_ ((Numero_pt) me, tam));
 }
 
-static inline
-Numero_pt Matriz_identidade_ (Numero_t const * const  me, unsigned int *tam)
-{
+static inline Numero_pt Matriz_identidade_ (Numero_t const * const  me, unsigned int *tam) {
 	// identidade
 }
 
-static inline
-Matriz_pt Multip_escalar_ (Matriz_pt const * const  me, double escalar)
-{
+static inline Matriz_pt Multip_escalar_ (Matriz_pt const * const  me, double escalar) {
 	return ((Matriz_pt) Matriz_multip_escalar_ ((Numero_pt) me, escalar));
 }
 
-static inline
-Numero_pt Matriz_multip_escalar_ (Numero_t const * const  me, double escalar)
-{
+static inline Numero_pt Matriz_multip_escalar_ (Numero_t const * const  me, double escalar) {
 	// multiplica escalar
 }
 
-static inline
-Matriz_pt Dot_ (Matriz_pt const * const  me, Matriz_pt const * const outro)
-{
+static inline Matriz_pt Dot_ (Matriz_pt const * const  me, Matriz_pt const * const outro) {
 	return ((Matriz_pt) Matriz_dot_ ((Numero_pt) me, (Numero_pt) outro));
 }
 
-static inline
-Numero_pt Matriz_dot_ (Numero_t const * const  me, Numero_pt const * const outro)
-{
+static inline Numero_pt Matriz_dot_ (Numero_t const * const me, Numero_t const * const outro) {
 	// dot
 }
 
 /*---------------------------------------------*
 *        outras funções                        *
 * ---------------------------------------------*/
-static inline
-Matriz_pt Transpor_ (Matriz_pt const * const  me)
-{
+static inline Matriz_pt Transpor_ (Matriz_pt const * const  me) {
 	return ((Matriz_pt) Matriz_transpor_ ((Numero_pt) me));
 }
 
-static inline
-Numero_pt Matriz_transpor_ (Numero_t const * const  me)
-{
+static inline Numero_pt Matriz_transpor_ (Numero_t const * const  me) {
 	// transpor
 }
 
-static inline
-Matriz_pt Transpor_diag2_ (Matriz_pt const * const  me)
-{
+static inline Matriz_pt Transpor_diag2_ (Matriz_pt const * const  me) {
 	return ((Matriz_pt) Matriz_transpor_diag2_ ((Numero_pt) me));
 }
 
-static inline
-Numero_pt Matriz_transpor_diag2_ (Numero_t const * const  me)
-{
+static inline Numero_pt Matriz_transpor_diag2_ (Numero_t const * const  me) {
 	// transpor em relação à diagonal secundária
 }
 
-static inline
-Matriz_pt Reverse_horizontal_ (Matriz_pt const * const  me)
-{
+static inline Matriz_pt Reverse_horizontal_ (Matriz_pt const * const  me) {
 	return ((Matriz_pt) Matriz_reverse_horizontal_ ((Numero_pt) me));
 }
 
-static inline
-Numero_pt Matriz_reverse_horizontal_ (Numero_t const * const  me)
-{
+static inline Numero_pt Matriz_reverse_horizontal_ (Numero_t const * const  me) {
 	// troca as posições das linhas (última vira primeira)
 
 }
 
-static inline
-Matriz_pt Reverse_vertical_ (Matriz_pt const * const  me)
-{
+static inline Matriz_pt Reverse_vertical_ (Matriz_pt const * const  me) {
 	return ((Matriz_pt) Matriz_reverse_vertical_ ((Numero_pt) me));
 }
 
-static inline
-Numero_pt Matriz_reverse_vertical_ (Numero_t const * const  me)
-{
+static inline Numero_pt Matriz_reverse_vertical_ (Numero_t const * const  me) {
 	// troca as posições das colunas
 }
 
-static inline
-Matriz_pt Acrescenta_linha_ (Matriz_pt const * const  me)
-{
-	return ((Matriz_pt) Matriz_acrescenta_linha_ ((Numero_Numero_pt) me));
+static inline Matriz_pt Acrescenta_linha_ (Matriz_pt const * const  me) {
+	return ((Matriz_pt) Matriz_acrescenta_linha_ ((Numero_pt) me));
 }
 
-static inline
-Numero_pt Matriz_acrescenta_linha_ (Numero_t const * const  me)
-{
+static inline Numero_pt Matriz_acrescenta_linha_ (Numero_t const * const  me){
 	// acrescenta uma linha na matriz, preenchendo com zeros
 }
 
-static inline
-Matriz_pt Acrescenta_coluna_ (Matriz_pt const * const  me)
-{
+static inline Matriz_pt Acrescenta_coluna_ (Matriz_pt const * const  me){
 	return ((Matriz_pt) Matriz_acrescenta_coluna_ ((Numero_pt) me));
 }
 
-static inline
-Numero_pt Matriz_acrescenta_coluna_ (Numero_t const * const  me)
-{
+static inline Numero_pt Matriz_acrescenta_coluna_ (Numero_t const * const  me){
 	// acrescenta uma coluna na matriz, preenchendo com zeros
 }
 
@@ -365,24 +333,25 @@ static inline char * Imprime_  ( Matriz_t const * const  me) {
 }
 
 static inline char * Matriz_imprime_  (Numero_t const * const  me) {
-    for(int i = 0; i < ((Matriz_pt) me)->tam[0]; i++){
-		printf("\n");
-        for (int j = 0; i < ((Matriz_pt) me)-tam[1]; j++) {
-			printf("%lf ", ((Matriz_pt) me)->mat[i][j]);
-		}
+    
+		for(int i = 0; i < ((Matriz_pt) me)->tam[0]; i++){
+			printf("\n");
+			for (int j = 0; i < ((Matriz_pt) me)->tam[1]; j++) {
+				printf("%lf ", ((Matriz_pt) me)->mat[i][j]);
+			}
     }
 }
 
 /*---------------------------------------------*
 * implementação do destrutor                   *
 * ---------------------------------------------*/
-static inline void Destroi_  ( MeuDouble_t  *   me) {
+static inline void Destroi_  ( Matriz_t  *   me) {
 	Matriz_destroi_ ((Numero_t *)  me);
 }
 
 static void Matriz_destroi_ (Numero_t *  me) {
-	for(int i = 0; i < me->tam[0]; i++){
-        free(((Matriz_pt) me)->mat[i]);
-    }
-    free((Numero_t **) me);
+	// for(int i = 0; i < me->tam[0]; i++){
+  //       free(((Matriz_pt) me)->mat[i]);
+  //   }
+  //   free((Numero_t **) me);
 }
