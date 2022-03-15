@@ -78,6 +78,10 @@ struct Matriz_Interface_st {
     Matriz_pt (*reverse_vertical) (Matriz_t const * const me);
     Matriz_pt (*acrescenta_linha) (Matriz_t const * const me);
     Matriz_pt (*acrescenta_coluna) (Matriz_t const * const me);
+    unsigned int * (* get_tamanho) (Matriz_t const * const me);
+    double * (* get_valores) (Matriz_t const * const me);
+    void (*set_tamanho) (Matriz_t * me, unsigned int * tamanho);
+    void (*setValores) (Matriz_t const * me, double * valores);
 
     /*-----------------------------------------------------------------------*/
 
