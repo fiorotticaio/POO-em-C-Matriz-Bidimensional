@@ -51,31 +51,43 @@ typedef struct Matriz_st * Matriz_pt;
 typedef struct Matriz_st  Matriz_t;
 
 struct Matriz_Interface_st {
-    Matriz_pt (*resize) (Matriz_pt const * const me, unsigned int *tam);
-    Matriz_pt (*ones) (Matriz_pt const * const me, unsigned int *tam);
-    Matriz_pt (*identidade) (Matriz_pt const * const me, unsigned int *tam);
-    Matriz_pt (*multip_escalar) (Matriz_pt const * const me, double escalar);
-    Matriz_pt (*dot) (Matriz_pt const * const me, Matriz_pt const * const outro);
+    Matriz_pt (*copia)(Matriz_t const *const me);
+    Matriz_pt (*atribui)(Matriz_t const *const me, Matriz_t *const outro);
+    Matriz_pt (*soma)(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res);
+    Matriz_pt (*subt)(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res);
+    Matriz_pt (*mult)(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res);
+    Matriz_pt (*divd)(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res);
+    Matriz_pt (*ac_soma)(Matriz_t *const me, Matriz_t const *const outro);
+    Matriz_pt (*ac_subt)(Matriz_t *const me, Matriz_t const *const outro);
+    Matriz_pt (*ac_mult)(Matriz_t *const me, Matriz_t const *const outro);
+    Matriz_pt (*ac_divd)(Matriz_t *const me, Matriz_t const *const outro);
+    int (*compara)(Matriz_t const *const me, Matriz_t const *const outro);
+    char * (*imprime)  (Matriz_t const * const  me);
+    void   (*destroi)  (Matriz_t * me);
 
     /*------------------ Outras funções ------------------------------------*/
 
-    Matriz_pt (*transpor) (Matriz_pt const * const me);
-    Matriz_pt (*transpor_diag2) (Matriz_pt const * const me);
-    Matriz_pt (*reverse_horizontal) (Matriz_pt const * const me);
-    Matriz_pt (*reverse_vertical) (Matriz_pt const * const me);
-    Matriz_pt (*acrescenta_linha) (Matriz_pt const * const me);
-    Matriz_pt (*acrescenta_coluna) (Matriz_pt const * const me);
+    Matriz_pt (*resize) (Matriz_t const * const me, unsigned int *tam);
+    Matriz_pt (*ones) (Matriz_t const * const me, unsigned int *tam);
+    Matriz_pt (*identidade) (Matriz_t const * const me, unsigned int *tam);
+    Matriz_pt (*multip_escalar) (Matriz_t const * const me, double escalar);
+    Matriz_pt (*dot) (Matriz_t const * const me, Matriz_t const * const outro);
+    Matriz_pt (*transpor) (Matriz_t const * const me);
+    Matriz_pt (*transpor_diag2) (Matriz_t const * const me);
+    Matriz_pt (*reverse_horizontal) (Matriz_t const * const me);
+    Matriz_pt (*reverse_vertical) (Matriz_t const * const me);
+    Matriz_pt (*acrescenta_linha) (Matriz_t const * const me);
+    Matriz_pt (*acrescenta_coluna) (Matriz_t const * const me);
 
     /*-----------------------------------------------------------------------*/
 
-    char * (*imprime)  (Matriz_t const * const  me);
-    void   (*destroi)  (Matriz_t * me);
+    
 };
 
 typedef struct Matriz_Interface_st *Matriz_Interface_pt;
 
 
 /* protótipo do construtor   */
-Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int tam[], double mat[]);
+Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int * tam, double * mat);
 
 #endif /* MATRIZ_H */

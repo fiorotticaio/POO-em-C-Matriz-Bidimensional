@@ -4,10 +4,11 @@
 int main () {
 	Matriz_pt ptM1 = NULL, ptM2 = NULL;
 
-	int tam[] = { 5 ,3 };
-	int mat[] = { 1,2,3,4,5,6,7,8,9,10,11,12 };
 	/* Criando as matrizes */
-	ptM1 = Matriz_2d_criar (ptM1, tam, mat);
+	int tamM1[] = { 5, 3 };
+	double valM1[] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0 };
+	ptM1 = Matriz_2d_criar (ptM1, tamM1, valM1);
+
 	printf("M1: \n");
 	printf("%s\n", ptM1->Metodo->imprime(ptM1));
 
