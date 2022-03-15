@@ -7,10 +7,10 @@
 #include "matriz.h"
 
 /*------------------------------------------------------------------*
- *  IMPLEMENTACAO DAS FUNCOES VIRTUAIS DE "DOUBLE"                  *
+ *  IMPLEMENTACAO DAS FUNCOES VIRTUAIS DE "MATRIZ"                  *
  * Uma função virtual é uma função que é declarada (mas não         *
  * implementada em uma classe base (NO CASO, NUMERO) e redefinida   *
- * pela classe derivada (NO CASO, DOUBLE).                          *
+ * pela classe derivada (NO CASO, MATRIZ).                          *
  * Para declarar uma função como sendo virtual, é preciso associá-la*
  * com uma entrada da tabela vtbl da classe base.                   *
  * A redefinição da função na classe derivada sobrepõe a definição  *
@@ -72,24 +72,6 @@ static Numero_pt Matriz_ac_divd_(Numero_t *const me, Numero_t const *const outro
 static int Matriz_compara_(Numero_t const *const me, Numero_t const *const outro);
 static char *Matriz_imprime_(Numero_t const *const me);
 static void Matriz_destroi_(Numero_t *me);
-
-/*------------------ Outras funções ------------------------------------*/
-
-// static Numero_pt Matriz_resize_ (Numero_t const * const me, unsigned int *tam);
-// static Numero_pt Matriz_ones_ (Numero_t const * const me, unsigned int *tam);
-// static Numero_pt Matriz_identidade_ (Numero_t const * const me, unsigned int *tam);
-// static Numero_pt Matriz_multip_escalar_ (Numero_t const * const me, double escalar);
-// static Numero_pt Matriz_dot_ (Numero_t const * const me, Numero_t const * const outro);
-// static Numero_pt Matriz_transpor_ (Numero_t const * const me);
-// static Numero_pt Matriz_transpor_diag2_ (Numero_t const * const me);
-// static Numero_pt Matriz_reverse_horizontal_ (Numero_t const * const me);
-// static Numero_pt Matriz_reverse_vertical_ (Numero_t const * const me);
-// static Numero_pt Matriz_acrescenta_linha_ (Numero_t const * const me);
-// static Numero_pt Matriz_acrescenta_Coluna_ (Numero_t const * const me);
-// char * Matriz_imprime_ (Numero_t const * const  me);
-// void Matriz_destroi_ (Numero_t * me);
-
-/*-----------------------------------------------------------------------*/
 
 
 /*---------------------------------------------------------------------*
@@ -321,7 +303,6 @@ static int Matriz_compara_(Numero_t const *const me, Numero_t const *const outro
 	//compara
 }
 
-
 /*---------------------------------------------*
 *        outras funções                        *
 * ---------------------------------------------*/
@@ -370,27 +351,50 @@ static inline Matriz_pt Acrescenta_coluna_ (Matriz_t const * const  me){
 	// acrescenta uma coluna na matriz, preenchendo com zeros
 }
 
-
 /*---------------------------------------------*
 * implementação da impressão                   *
 * ---------------------------------------------*/
+
 static inline char * Imprime_  ( Matriz_t const * const  me) {
 	return ( Matriz_imprime_ ((Numero_pt) me));
 }
 
 static inline char * Matriz_imprime_  (Numero_t const * const  me) {
-    
-		for(int i = 0; i < ((Matriz_pt) me)->tam[0]; i++){
-			printf("\n");
-			for (int j = 0; i < ((Matriz_pt) me)->tam[1]; j++) {
-				printf("%lf ", ((Matriz_pt) me)->mat[i][j]);
-			}
-    }
+	// static char buffer[100];
+	// int i, j;
+
+	// sprintf(buffer, "{");
+	// for(i = 0; i < ((Matriz_pt) me)->tam[0]; i++){
+	// 	sprintf(buffer, "%s\n\t", buffer);
+	// 	for (j = 0; j < ((Matriz_pt) me)->tam[1]; j++) {
+	// 		sprintf(buffer, "%s%.2lf\t", buffer, ((Matriz_pt) me)->mat[i][j]);
+	// 	}
+	// }
+	// sprintf(buffer, "%s\n}\n", buffer);
+
+	// return buffer;
+
+
+	int i, j;
+
+	printf("{");
+	for(i = 0; i < ((Matriz_pt) me)->tam[0]; i++){
+		printf("\n\t");
+		for (j = 0; j < ((Matriz_pt) me)->tam[1]; j++) {
+			printf("%.2lf\t", ((Matriz_pt) me)->mat[i][j]);
+		}
+	}
+	printf("\n}\n");
+
+
+	return "";
+
 }
 
 /*---------------------------------------------*
 * implementação do destrutor                   *
 * ---------------------------------------------*/
+
 static inline void Destroi_  ( Matriz_t  *   me) {
 	Matriz_destroi_ ((Numero_t *)  me);
 }

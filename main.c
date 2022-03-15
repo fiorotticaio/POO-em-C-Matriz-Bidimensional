@@ -6,10 +6,10 @@ int main () {
 
 	/* Criando as matrizes */
 	int tamM1[] = { 5, 3 };
-	double valM1[] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0 };
+	double valM1[] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0 };
 	ptM1 = Matriz_2d_criar (ptM1, tamM1, valM1);
 
-	printf("M1: \n");
+	printf("M1: ");
 	printf("%s\n", ptM1->Metodo->imprime(ptM1));
 
 	// ptM2 = Matriz_2d_criar (ptM1, [5,3], [13,14,15,16,17,18,19,20,21,22,23,24]);
