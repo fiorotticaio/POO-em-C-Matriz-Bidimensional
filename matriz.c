@@ -98,12 +98,12 @@ static void Destroi_(Matriz_t *me);
 static Matriz_pt Resize_ (Matriz_t const * const me, unsigned int *tam);
 static Matriz_pt Ones_ (Matriz_t const * const me, unsigned int *tam);
 static Matriz_pt Identidade_ (Matriz_t const * const me, unsigned int *tam);
-static Matriz_pt Multip_escalar_ (Matriz_t const * const me, double escalar);
+static Matriz_pt Multip_escalar_ (Matriz_t * const me, double escalar);
 static Matriz_pt Dot_ (Matriz_t const * const me, Matriz_t const * const outro);
 static Matriz_pt Transpor_ (Matriz_t const * const me);
 static Matriz_pt Transpor_diag2_ (Matriz_t const * const me);
-static Matriz_pt Reverse_horizontal_ (Matriz_t const * const me);
-static Matriz_pt Reverse_vertical_ (Matriz_t const * const me);
+static Matriz_pt Reverse_horizontal_ (Matriz_t * const me);
+static Matriz_pt Reverse_vertical_ (Matriz_t * const me);
 static Matriz_pt Acrescenta_linha_ (Matriz_t const * const me);
 static Matriz_pt Acrescenta_coluna_ (Matriz_t const * const me);
 
@@ -253,8 +253,16 @@ static Numero_pt Matriz_copia_(Numero_t const *const me){
 static Matriz_pt Atribui_(Matriz_t const *const me, Matriz_t *const outro){
 	return ((Matriz_pt) Matriz_atribui_ ((Numero_pt) me, (Numero_pt)outro));
 }
-static Numero_pt Matriz_atribui_(Numero_t const *const me,Numero_t *const outro){
-	//atribui
+static Numero_pt Matriz_atribui_(Numero_t const *const me, Numero_t *const outro){
+	/* Somente pra matrizes de tamanhos iguais */
+
+	// unsigned int * tam = Get_tamanho_((Matriz_pt)me);
+	// double * valores = Get_valores_((Matriz_pt)me);
+
+	// Set_tamanho_((Matriz_pt) outro, tam);
+	// Set_valores_((Matriz_pt) outro, valores);
+
+	// return (Numero_pt) outro;
 }
 
 static Matriz_pt Soma_(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res){
@@ -295,7 +303,27 @@ static Matriz_pt Mult_(Matriz_t const *const me, Matriz_t const *const outro, Ma
 	return ((Matriz_pt) Matriz_mult_ ((Numero_pt) me, (Numero_pt) outro, (Numero_pt) res));
 }
 static Numero_pt Matriz_mult_(Numero_t const *const me, Numero_t const *const outro, Numero_t *const res){
-	//multiplica
+	int i, j, k;
+	double somaProd;
+
+	if (((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[0]) {
+		printf("\nNao eh possivel multiplicar essas matrizes!\n");
+		printf("O numero de colunas da primeira tem que ser igual ao numero de linhas da segunda!\n");
+
+	} else {
+		/* Algorítmo de multiplicação de matrizes */
+		for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
+			for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
+				somaProd = 0;
+				for (k = 0; k < ((Matriz_pt)me)->tam[1]; k++) {
+					somaProd += ((Matriz_pt)me)->mat[i][k] * ((Matriz_pt)outro)->mat[k][j];
+				}
+				((Matriz_pt)res)->mat[i][j] = somaProd;
+			}
+		}
+	}
+
+	return (Numero_pt) res;
 }
 
 static Matriz_pt Divd_(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res){
@@ -375,6 +403,7 @@ static int Matriz_compara_(Numero_t const *const me, Numero_t const *const outro
 
 static unsigned int * Get_tamanho_ (Matriz_t const * const me){
 	static unsigned int tamanho[2];
+
 	
 	tamanho[0] = me->tam[0];
 	tamanho[1] = me->tam[1];
@@ -435,24 +464,108 @@ static void Set_valores_ (Matriz_t const * me, double * valores){
 	// printf("\n");
  }
 
+
 /*---------------------------------------------*
-*        outras funções                        *
+*        funções avançadas                     *
 * ---------------------------------------------*/
 
-static inline Matriz_pt Resize_ (Matriz_t const * const  me,  unsigned int *tam) {
-	// resize
+static inline Matriz_pt Resize_ (Matriz_t const * const me,  unsigned int *tam) {
+	// /* Salvando o tamanho atual da matriz */
+	// int linha = me->tam[0];
+	// int coluna = me->tam[1];
+
+	// /* Atualizando o tamanho da matriz */
+	// me->tam[0] = tam[0];
+	// me->tam[1] = tam[1];
+
+	// if (linha != tam[0]) {
+	// 	/* realoca dinamicamente uma area de memoria para os valores da matriz  */
+	// 	/* e atribui o endereço de memória alocada para o ponteiro */
+	// 	/* valor que está dentro da estrutura Matriz_st */
+	// 	me->mat = (double **) realloc (me->mat, tam[0] * sizeof(double *));
+
+	// 	if (me->mat == NULL) {	
+	// 		/* erro!!! não conseguiu alocar */
+	// 		printf ("Erro na realocação de memória em Resize_");
+	// 		printf ("Nao realocou os valores de me->mat");
+	// 		exit (1);
+	// 	}
+	// }
+
+	// if (coluna != tam[0]) {
+	// 	int i = 0, j;
+	// 	printf ("\ni = %d\ntam[0] = %d", i, tam[0]);
+	// 	for (i = linha; i < tam[0]; i++) {
+	// 		me->mat[i] = (double *) realloc (me->mat[i], tam[1] * sizeof(double));
+	// 		if (me->mat[i] == NULL) {
+	// 			/* erro!!! não conseguiu alocar */
+	// 			printf ("Erro na realocação de memória em Resize_");
+	// 			printf ("Nao realocou os valores de me->mat[%d]", i);
+	// 			exit (1);
+	// 		}
+			
+	// 		for (j = coluna; j < tam[1]; j++) {
+	// 			printf ("me->mat[%d][%d]\n", i, j);
+	// 			me->mat[i][j] = 0;
+	// 		}
+	// 	}
+	// }
+
+	// return me;
 }
 
-static inline Matriz_pt Ones_ (Matriz_t const * const  me, unsigned int *tam) {
-	// ones
+static inline Matriz_pt Ones_ (Matriz_t const * const me, unsigned int *tam) {
+	// me->tam = (unsigned int *) malloc (2*sizeof(unsigned int));
+	// if (me->tam == NULL) {
+	// 	/*erro!!! não conseguiu alocar */
+	// 	printf ("Erro na alocação de memória em Ones_");
+	// 	printf ("Nao alocou os valores unsigned int do tamanho da matriz");
+	// 	exit (1);
+	// }
+	// me->tam = tam;
+
+	// /* aloca dinamicamente uma area de memoria para os valores da matriz  */
+	// /* e atribui o endereço de memória alocada para o ponteiro */
+	// /* valor que está dentro da estrutura Matriz_st */
+	// me->mat = (double **) malloc (tam[0] * sizeof(double *));
+
+	// if (me->mat == NULL) {
+	// 	/*erro!!! não conseguiu alocar */
+	// 	printf ("Erro na alocação de memória em Ones_");
+	// 	printf ("Nao alocou os valores de me->mat");
+	// 	exit (1);
+	// }
+
+	// int i, j;
+	// for (i = 0; i < tam[0]; i++) {
+	// 	me->mat[i] = (double *) malloc (tam[1] * sizeof(double));
+	// 	if (me->mat[i] == NULL) {
+	// 		/*erro!!! não conseguiu alocar */
+	// 		printf ("Erro na alocação de memória em Ones_");
+	// 		printf ("Nao alocou os valores de me->mat[%d]", i);
+	// 		exit (1);
+	// 	}
+		
+	// 	for (j = 0; j < tam[1]; j++) {
+	// 		me->mat[i][j] = 1;
+	// 	}
+	// }
+
+	// return (Matriz_pt) me;
 }
 
 static inline Matriz_pt Identidade_ (Matriz_t const * const  me, unsigned int *tam) {
 	// identidade
 }
 
-static inline Matriz_pt Multip_escalar_ (Matriz_t const * const  me, double escalar) {
-	// multiplica escalar
+static inline Matriz_pt Multip_escalar_ (Matriz_t * const me, double escalar) {
+	int i, j;
+	for (i = 0; i < me->tam[0]; i++) {
+		for (j = 0; j < me->tam[1]; j++) {
+			me->mat[i][j] *= 2;
+		}
+	}
+	return (Matriz_pt) me;
 }
 
 static inline Matriz_pt Dot_ (Matriz_t const * const  me, Matriz_t const * const outro) {
@@ -461,27 +574,49 @@ static inline Matriz_pt Dot_ (Matriz_t const * const  me, Matriz_t const * const
 
 static inline Matriz_pt Transpor_ (Matriz_t const * const  me) {
 	// transpor
+	// vai ter que mexer com resize...
 }
 
 static inline Matriz_pt Transpor_diag2_ (Matriz_t const * const  me) {
 	// transpor em relação à diagonal secundária
 }
 
-static inline Matriz_pt Reverse_horizontal_ (Matriz_t const * const  me) {
-	// troca as posições das linhas (última vira primeira)
+static inline Matriz_pt Reverse_horizontal_ (Matriz_t * const  me) {
+	Matriz_t * aux = NULL;
+	aux = me->Metodo->copia(me);
+
+	int i, j, m, n;
+	for (i = 0, m = (me->tam[0])-1; i < me->tam[0]; i++, m--) {
+		for (j = 0, n = 0; j < me->tam[1]; j++, n++) {
+			me->mat[i][j] = aux->mat[m][n];
+		}
+	}
+	return (Matriz_pt) me;
 }
 
-static inline Matriz_pt Reverse_vertical_ (Matriz_t const * const  me) {
-	// troca as posições das colunas
+static inline Matriz_pt Reverse_vertical_ (Matriz_t * const  me) {
+	Matriz_t * aux = NULL;
+	aux = me->Metodo->copia(me);
+
+	int i, j, m, n;
+	for (i = 0, m = 0; i < me->tam[0]; i++, m++) {
+		for (j = 0, n = (me->tam[1])-1; j < me->tam[1]; j++, n--) {
+			me->mat[i][j] = aux->mat[m][n];
+		}
+	}
+	return (Matriz_pt) me;
 }
 
 static inline Matriz_pt Acrescenta_linha_ (Matriz_t const * const  me) {
 	// acrescenta uma linha na matriz, preenchendo com zeros
+	// vai ter que mexer com resize...
 }
 
 static inline Matriz_pt Acrescenta_coluna_ (Matriz_t const * const  me){
 	// acrescenta uma coluna na matriz, preenchendo com zeros
+	// vai ter que mexer com resize...
 }
+
 
 /*---------------------------------------------*
 * implementação da impressão                   *
