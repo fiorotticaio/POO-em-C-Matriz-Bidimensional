@@ -3,7 +3,7 @@
 
 int main () {
 	Matriz_pt ptM1 = NULL, ptM2 = NULL, ptM3 = NULL, ptM4 = NULL, ptM5 = NULL;
-	Matriz_pt ptO1 = NULL;
+	Matriz_pt ptO1 = NULL, ptI1 = NULL;
 
 	/* Criando as matrizes (DIMENSÃO MÁXIMA DE 10 x 10) */ 
 	int tamM1[] = { 5, 3 };
@@ -38,8 +38,9 @@ int main () {
 	ptM3 = ptM1->Metodo->copia(ptM1);
 	ptM3->Metodo->imprime(ptM3);
 
-	// atribui (?)
-	// se as matrizes tiverem tamanhos diferentes tem que fazer o resize
+	printf("\nAtribuindo M1 a M2\nM2:");
+	ptM2 = ptM1->Metodo->atribui(ptM1, ptM2);
+	ptM2->Metodo->imprime(ptM2);
 
 	ptM2 = ptM2->Metodo->soma(ptM1, ptM2, ptM2);
 	printf("\nSomando M1 com M2 e aplicando em M2\nM2:");
@@ -48,6 +49,12 @@ int main () {
 	ptM2 = ptM2->Metodo->subt(ptM1, ptM2, ptM2);
 	printf("\nSubtraindo M2 de M1 e aplicando em M2\nM2:");
 	ptM2->Metodo->imprime(ptM2);
+
+	printf("\nM1:");
+	ptM1->Metodo->imprime(ptM1);
+	
+	printf("\nM4:");
+	ptM4->Metodo->imprime(ptM4);
 
 	ptM5 = ptM5->Metodo->mult(ptM1, ptM4, ptM5);
 	printf("\nMultiplicando M1 com M4 e colocando o resultado em M5\nM5:");
@@ -65,8 +72,16 @@ int main () {
 	printf("\nFazendo subtração acumulada entre M1 e M2\nM2:");
 	ptM2->Metodo->imprime(ptM2);
 
-	//ac_mult (?)
-	// mais complicado pois vai ter que mexer com o tamanho da matriz
+	printf("\nM1:");
+	ptM1->Metodo->imprime(ptM1);
+	
+	printf("\nM4:");
+	ptM4->Metodo->imprime(ptM4);
+
+	/* Está mudando o M2?? */
+	// ptM4 = ptM1->Metodo->ac_mult(ptM1, ptM4);
+	// printf("\nMultiplicando M1 com M4 e colocando o resultado em M4\nM4:");
+	// ptM4->Metodo->imprime(ptM4);
 
 	//ac_divisao (?)
 
@@ -77,19 +92,20 @@ int main () {
 	
 	/* Aplicando as funções avançadas */
 
-	// int newTamM1[] = { 5, 5 };
-	// ptM1 = ptM1->Metodo->resize(ptM1, newTamM1);
-	// printf("\nResize\nM1:");
-	// ptM1->Metodo->imprime(ptM1);
+	int newTamM1[] = { 5, 5 };
+	ptM1 = ptM1->Metodo->resize(ptM1, newTamM1);
+	printf("\nM1 mudando de { 5, 3 } para { 5, 5}\nM1:");
+	ptM1->Metodo->imprime(ptM1);
 
-	// int tamO1[] = { 5, 3 };
-	// ptO1 = ptO1->Metodo->ones (ptO1, tamO1);
-	// printf("\nOnes\nO1:");
-	// ptM1->Metodo->imprime(ptM1);
+	int tamO1[] = { 5, 3 };
+	ptO1 = ptM1->Metodo->ones (ptO1, tamO1);
+	printf("\nCriando matriz de 1's\nO1:");
+	ptO1->Metodo->imprime(ptO1);
 
-	// ptM1 = ptM1->Metodo->identidade (ptM1, [5,3]);
-	// printf("\n\nIdentidade\n")
-	// printf("%s", ptM1->Metodo->imprime(ptM1));
+	int tamI1[] = { 3, 3 };
+	ptI1 = ptM1->Metodo->identidade (ptI1, tamI1);
+	printf("\nCriando matriz identidade\nI1:");
+	ptI1->Metodo->imprime(ptI1);
 
 	ptM1 = ptM1->Metodo->multip_escalar (ptM1, 2);
 	printf("\nM1 Multiplicada por 2\nM1:");
@@ -99,9 +115,9 @@ int main () {
 	// printf("\n\nDot\n");
 	// printf("%s", ptM1->Metodo->imprime(ptM1));
 
-	// ptM1 = ptM1->Metodo->transpor (ptM1);
-	// printf("\n\nTranspor\n");
-	// printf("%s", ptM1->Metodo->imprime(ptM1));
+	ptM1 = ptM1->Metodo->transpor (ptM1);
+	printf("\nTranspondo M1\nM1:");
+	ptM1->Metodo->imprime(ptM1);
 
 	// ptM1 = ptM1->Metodo->transpor_diag2 (ptM1);
 	// printf("\n\nTranspor diagonal 2\n");
@@ -115,21 +131,24 @@ int main () {
 	printf("\nM1 reversa verticalmente\nM1:");
 	ptM1->Metodo->imprime(ptM1);
 
-	// ptM1 = ptM1->Metodo->acrescenta_linha (ptM1);
-	// printf("\n\nAcrescenta linha\n");
-	// printf("%s", ptM1->Metodo->imprime(ptM1));
+	ptM1 = ptM1->Metodo->acrescenta_linha (ptM1);
+	printf("\nAcrescentando uma linha a M1\nM1:");
+	ptM1->Metodo->imprime(ptM1);
 
+	/* não sei o porquẽ que ta dando Segmentation fault */
 	// ptM1 = ptM1->Metodo->acrescenta_coluna (ptM1);
-	// printf("\n\nAcrescenta coluna\n");
-	// printf("%s", ptM1->Metodo->imprime(ptM1));
+	// printf("\nAcrescentando uma coluna a M1\nM1:");
+	// ptM1->Metodo->imprime(ptM1);
 
 	
-	printf("\nDestruindo M1, M2, M3, M4 e M5");
+	printf("\nDestruindo M1, M2, M3, M4, M5, O1 e I1\n");
 	ptM1->Metodo->destroi(ptM1);
-	// ptM2->Metodo->destroi(ptM2);
-	// ptM3->Metodo->destroi(ptM3);
-	// ptM4->Metodo->destroi(ptM4);
-	// ptM5->Metodo->destroi(ptM5);
+	ptM2->Metodo->destroi(ptM2);
+	ptM3->Metodo->destroi(ptM3);
+	ptM4->Metodo->destroi(ptM4);
+	ptM5->Metodo->destroi(ptM5);
+	ptO1->Metodo->destroi(ptO1);
+	ptI1->Metodo->destroi(ptI1);
 
 	return (0);
 }

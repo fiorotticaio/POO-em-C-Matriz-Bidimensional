@@ -67,17 +67,17 @@ struct Matriz_Interface_st {
 
     /*------------------ Outras funções ------------------------------------*/
 
-    Matriz_pt (*resize) (Matriz_t const * const me, unsigned int *tam);
-    Matriz_pt (*ones) (Matriz_t const * const me, unsigned int *tam);
-    Matriz_pt (*identidade) (Matriz_t const * const me, unsigned int *tam);
+    Matriz_pt (*resize) (Matriz_t * const me, unsigned int *tam);
+    Matriz_pt (*ones) (Matriz_pt me, unsigned int *tam);
+    Matriz_pt (*identidade) (Matriz_pt me, unsigned int *tam);
     Matriz_pt (*multip_escalar) (Matriz_t * const me, double escalar);
     Matriz_pt (*dot) (Matriz_t const * const me, Matriz_t const * const outro);
-    Matriz_pt (*transpor) (Matriz_t const * const me);
+    Matriz_pt (*transpor) (Matriz_t * const me);
     Matriz_pt (*transpor_diag2) (Matriz_t const * const me);
     Matriz_pt (*reverse_horizontal) (Matriz_t * const me);
     Matriz_pt (*reverse_vertical) (Matriz_t * const me);
-    Matriz_pt (*acrescenta_linha) (Matriz_t const * const me);
-    Matriz_pt (*acrescenta_coluna) (Matriz_t const * const me);
+    Matriz_pt (*acrescenta_linha) (Matriz_t * const me);
+    Matriz_pt (*acrescenta_coluna) (Matriz_t * const me);
     unsigned int * (* get_tamanho) (Matriz_t const * const me);
     double * (* get_valores) (Matriz_t const * const me);
     void (*set_tamanho) (Matriz_t * me, unsigned int * tamanho);
