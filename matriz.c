@@ -190,14 +190,16 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int * tam, double * mat) {
 	/* aloca dinamicamente uma area de memoria para o tamanho da matriz  */
 	/* e atribui o endereço de memória alocada para o ponteiro */
 	/* valor que está dentro da estrutura Matriz_st */
-	me->tam = (unsigned int *) malloc (2*sizeof(unsigned int));
+	me->tam = (unsigned int *) malloc (2 * sizeof(unsigned int));
 	if (me->tam == NULL)
 	{	/*erro!!! não conseguiu alocar */
 		printf ("Erro na alocação de memória em Matriz_2d_criar");
 		printf ("Nao alocou os valores unsigned int do tamanho da matriz");
 		exit (1);
 	}
-	me->tam = tam;
+	// me->tam = tam;
+	me->tam[0] = tam[0];
+	me->tam[1] = tam[1];
 
 	/* aloca dinamicamente uma area de memoria para os valores da matriz  */
 	/* e atribui o endereço de memória alocada para o ponteiro */
@@ -260,12 +262,12 @@ static Numero_pt Matriz_atribui_(Numero_t const *const me, Numero_t *const outro
 	unsigned int * tam = Get_tamanho_((Matriz_pt)me);
 	double * valores = Get_valores_((Matriz_pt)me);
 
-	Resize_((Matriz_pt) outro, tam);
+	// Resize_((Matriz_pt) outro, tam);
 
 	Set_tamanho_((Matriz_pt) outro, tam);
 	Set_valores_((Matriz_pt) outro, valores);
 
-	return (Numero_pt) outro;
+	// return (Numero_pt) outro;
 }
 
 static Matriz_pt Soma_(Matriz_t const *const me, Matriz_t const *const outro, Matriz_t *const res){
@@ -460,42 +462,27 @@ static double * Get_valores_ (Matriz_t const * const me){
 static void Set_tamanho_ (Matriz_t * me, unsigned int * const tamanho){ 
 	int i, j, k=0;
 
-	me->tam = tamanho;
-
-	// Realocando espaço de memoria
-	
-	
-	
-	for (i = 0; i < me->tam[0]; i++) {
-		
-		me->mat[i] = (double *) realloc (me->mat[i], me->tam[1] * sizeof(double));
-		
-		for(j=0;j<me->tam[1];j++) {
-			me->mat[i][j] = k;
-			k++;
-		}
-	}
-
+	me->tam[0] = tamanho[0];
+	me->tam[1] = tamanho[1];
 
 	me->mat = (double **) realloc (me->mat, me->tam[0] * sizeof(double *));
+
+	// Realocando espaço de memoria
+	for (i = 0; i < me->tam[0]; i++) {
+		me->mat[i] = (double *) realloc (me->mat[i], me->tam[1] * sizeof(double));
+		for(j=0;j<me->tam[1];j++) if (!me->mat[i][j]) me->mat[i][j] = 0;
+	}
 	
  }
 static void Set_valores_ (Matriz_t const * me, double * valores){ 
 	int i=0, j=0, k=0;
 
-	// printf("\n");
-	// for(i=0;i<25;i++)printf("%.2lf ", valores[i]);
-	// printf("\n");
-
 	for(i=0;i < me->tam[0];i++){
 		for(j=0;j < me->tam[1];j++){
 			me->mat[i][j] = valores[k];
-			// printf("i:%d j:%d k:%d tam1:%d tam2:%d me(%dx%d): %.2lf\n", i, j, k, me->tam[0], me->tam[1], i, j, me->mat[i][j]);
 			k++;
 		}
 	}	
-
-	// printf("\n");
  }
 
 
@@ -533,16 +520,20 @@ static inline Matriz_pt Resize_ (Matriz_t * const me,  unsigned int *tam) {
 			printf ("Nao realocou os valores de me->mat[%d]", i);
 			exit (1);
 		}
+
 		if (i < aux->tam[0]) {
 			for (j = 0; j < tam[1]; j++) {
-				if (j < aux->tam[1]) { // posição antiga
+				if (j < aux->tam[1]) { 
+					//colocando os elementos antigos na nova matriz (mesmas linhas e mesmas colunas)
 					me->mat[i][j] = aux->mat[i][j];
-				} else { // posição nova
+				} else { 
+					//inserindo zeros nos novos espaços (mesma linha porem novas colunas)
 					me->mat[i][j] = 0;
 				}
 			}
 
-		} else { // posição nova
+		} else { 
+			//inserindo zeros nos novos espaços (novas linhas))
 			for (j = 0; j < tam[1]; j++) {
 				me->mat[i][j] = 0;
 			}
@@ -551,7 +542,6 @@ static inline Matriz_pt Resize_ (Matriz_t * const me,  unsigned int *tam) {
 	}
 
 	aux->Metodo->destroi(aux);
-
 	return me;
 }
 
@@ -850,49 +840,49 @@ static inline Matriz_pt Reverse_vertical_ (Matriz_t * const  me) {
 }
 
 static inline Matriz_pt Acrescenta_linha_ (Matriz_t * const  me) {
-	Matriz_t * aux = NULL;
-	aux = me->Metodo->copia(me);
+	// Matriz_t * aux = NULL;
+	// aux = me->Metodo->copia(me);
 
 	int novoTam[] = { (me->tam[0])+1, me->tam[1] };
 	Resize_(me, novoTam);
 
-	int i, j;
-	for (i = 0; i < me->tam[0]; i++) {
-		if (i < aux->tam[0]) {
-			for (j = 0; j < me->tam[1]; j++) {
-				me->mat[i][j] = aux->mat[i][j];
-			}
-		} else {
-			for (j = 0; j < me->tam[1]; j++) {
-				me->mat[i][j] = 0;
-			}
-		}
-	}
+	// int i, j;
+	// for (i = 0; i < me->tam[0]; i++) {
+	// 	if (i < aux->tam[0]) {
+	// 		for (j = 0; j < me->tam[1]; j++) {
+	// 			me->mat[i][j] = aux->mat[i][j];
+	// 		}
+	// 	} else {
+	// 		for (j = 0; j < me->tam[1]; j++) {
+	// 			me->mat[i][j] = 0;
+	// 		}
+	// 	}
+	// }
 
-	aux->Metodo->destroi(aux);
+	// aux->Metodo->destroi(aux);
 
 	return (Matriz_pt) me;
 }
 
 static inline Matriz_pt Acrescenta_coluna_ (Matriz_t * const  me){
-	Matriz_t * aux = NULL;
-	aux = me->Metodo->copia(me);
+	// Matriz_t * aux = NULL;
+	// aux = me->Metodo->copia(me);
 
 	int novoTam[] = { me->tam[0], (me->tam[1])+1 };
 	Resize_(me, novoTam);
 
-	int i, j;
-	for (i = 0; i < me->tam[0]; i++) {
-		for (j = 0; j < me->tam[1]; j++) {
-			if (j < aux->tam[1]) {
-				me->mat[i][j] = aux->mat[i][j];
-			} else {
-				me->mat[i][j] = 0;
-			}
-		}
-	}
+	// int i, j;
+	// for (i = 0; i < me->tam[0]; i++) {
+	// 	for (j = 0; j < me->tam[1]; j++) {
+	// 		if (j < aux->tam[1]) {
+	// 			me->mat[i][j] = aux->mat[i][j];
+	// 		} else {
+	// 			me->mat[i][j] = 0;
+	// 		}
+	// 	}
+	// }
 
-	aux->Metodo->destroi(aux);
+	// aux->Metodo->destroi(aux);
 
 	return (Matriz_pt) me;
 }
@@ -956,7 +946,9 @@ static inline void Destroi_  (Matriz_t * me) {
 }
 static void Matriz_destroi_ (Numero_t * me) {
 	for(int i = 0; i < ((Matriz_pt)me)->tam[0]; i++){
-		free(((Matriz_pt) me)->mat[i]);
+		if (((Matriz_pt) me)->mat[i]!=NULL) free(((Matriz_pt) me)->mat[i]);
 	}
-	free((Matriz_pt)me);
+	if (((Matriz_pt) me)->mat!=NULL) free(((Matriz_pt) me)->mat);
+	if (((Matriz_pt) me)->tam!=NULL) free(((Matriz_pt) me)->tam);
+	if ((Matriz_pt)me!=NULL) free((Matriz_pt)me);
 }

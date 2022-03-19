@@ -1,9 +1,9 @@
 prog: clean main.o
-	gcc -o prog main.o numero.o matriz.o
+	gcc -o prog main.o numero.o matriz.o 
 	./prog
 
 main.o: numero.o matriz.o
-	gcc -c main.c
+	gcc -c main.c 
 
 numero.o: 
 	gcc -c numero.c
