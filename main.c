@@ -1,3 +1,17 @@
+/*
+	CÓDIGO DESENVOLVIDO POR:
+		MATHEUS MEIER SCHREIBER 	github: @matheusschreiber
+		CAIO ALVES FIOROTTI 			github: @fiorotticaio
+
+	DATA: MARÇO DE 2022
+
+	OBJETIVO:
+		TRABALHO NA DISCIPLINA DE TÓPICOS ESPECIAIS EM PROGRAMAÇÃO
+		CONSTRUIR UM TAD DE UMA MATRIZ BIDIMENSIONAL
+*/
+
+
+
 #include <stdio.h>
 #include "matriz.h"
 
@@ -42,7 +56,7 @@ int main () {
 
 
 	// Atribuição dos valores de uma matriz à outra
-	ptM1->Metodo->atribui(ptM1, ptM2);
+	ptM2 = ptM2->Metodo->atribui(ptM1, ptM2);
 	printf("\nAtribuindo M1 a M2\nM2:"); 
 	ptM2->Metodo->imprime(ptM2); 
 
@@ -59,12 +73,6 @@ int main () {
 	ptM2 = ptM2->Metodo->subt(ptM1, ptM2, ptM2);
 	printf("\nSubtraindo M2 de M1 e aplicando em M2\nM2:");
 	ptM2->Metodo->imprime(ptM2);
-
-
-
-	// Imprimindo matrizes M1 e M4
-	printf("\nM1:"); ptM1->Metodo->imprime(ptM1);
-	printf("\nM4:"); ptM4->Metodo->imprime(ptM4);
 
 
 	// Multiplicação escalar (elemento à elemento) entre matrizes
@@ -126,7 +134,7 @@ int main () {
 
 	// Matriz com algarismo 1 em todos os seus espaços
 	unsigned int tamOnes[] = { 5, 3 };
-	ptO1 = ptM1->Metodo->ones (ptO1, tamOnes);
+	ptO1 = ptM1->Metodo->ones(ptO1, tamOnes);
 	printf("\nCriando matriz de 1's (%d x %d)\n01:", tamOnes[0], tamOnes[1]);
 	ptO1->Metodo->imprime(ptO1);
 
@@ -187,7 +195,7 @@ int main () {
 	ptM2->Metodo->imprime(ptM2);
 
 	ptM1 = ptM1->Metodo->dot(ptM1, ptM2);
-	printf("Fazendo multiplicação vetorial entre M1 e M2 e armazenando em M1\nM1:");
+	printf("Fazendo multiplicação vetorial entre M1 e M2 e armazenando em M1 (aprox)\nM1:");
 	ptM1->Metodo->imprime(ptM1);
 
 

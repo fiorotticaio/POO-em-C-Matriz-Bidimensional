@@ -1,6 +1,15 @@
+/*
+ESSE ARQUIVO FOI UTILIZADO COMO BASE PARA A IMPLEMENTAÇÃO
+DA FUNÇÃO DE INVERSA NO PROGRAMA PRINCIPAL.
+
+O CÓDIGO FOI ADAPTADO DE UM MODELO EXTERNO
+CREDITOS AO MODELO EXTERNO: https://www.sanfoundry.com/c-program-find-inverse-matrix/
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+
 void destroiVetorLocal(double ** vector, double order){
   int i;
   for(i=0;i<order;i++) if (vector[i] != NULL) free(vector[i]);

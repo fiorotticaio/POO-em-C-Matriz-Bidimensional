@@ -1,3 +1,16 @@
+/*
+	CÓDIGO DESENVOLVIDO POR:
+		MATHEUS MEIER SCHREIBER 	github: @matheusschreiber
+		CAIO ALVES FIOROTTI 			github: @fiorotticaio
+
+	DATA: MARÇO DE 2022
+
+	OBJETIVO:
+		TRABALHO NA DISCIPLINA DE TÓPICOS ESPECIAIS EM PROGRAMAÇÃO
+		CONSTRUIR UM TAD DE UMA MATRIZ BIDIMENSIONAL
+*/
+
+
 #ifndef MATRIZ_H
 #define MATRIZ_H
 
@@ -82,7 +95,7 @@ struct Matriz_Interface_st {
     Matriz_pt (*remove_coluna) (Matriz_t * const me);
     Matriz_pt (*inversa) (Matriz_t * const me);
     unsigned int * (* get_tamanho) (Matriz_t const * const me);
-    double * (* get_valores) (Matriz_t const * const me);
+    double * (* get_valores) (Matriz_t const * const me, double * val);
     void (*set_tamanho) (Matriz_t * me, unsigned int * tamanho);
     void (*setValores) (Matriz_t const * me, double * valores);
 
