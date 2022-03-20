@@ -99,9 +99,9 @@ static Matriz_pt Resize_ (Matriz_t * const me, unsigned int *tam);
 static Matriz_pt Ones_ (Matriz_pt me, unsigned int *tam);
 static Matriz_pt Identidade_ (Matriz_pt me, unsigned int *tam);
 static Matriz_pt Multip_escalar_ (Matriz_t * const me, double escalar);
-static Matriz_pt Dot_ (Matriz_t const *  me, Matriz_t const * const outro);
+static Matriz_pt Dot_ (Matriz_t *  me, Matriz_t const * const outro);
 static Matriz_pt Transpor_ (Matriz_t * const me);
-static Matriz_pt Transpor_diag2_ (Matriz_t const * const me);
+static Matriz_pt Transpor_diag2_ (Matriz_t * const me);
 static Matriz_pt Reverse_horizontal_ (Matriz_t * const me);
 static Matriz_pt Reverse_vertical_ (Matriz_t * const me);
 static Matriz_pt Acrescenta_linha_ (Matriz_t * const me);
@@ -119,7 +119,7 @@ static void Set_valores_ (Matriz_t const * me, double * valores);
 
 
  /*---------------------------------------------*
- * implementação do construtor                  *
+ * IMPLEMENTAÇÃO DO CONSTRUTOR                  *
  * ---------------------------------------------*/
 Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int * tam, double * mat) {
 	/* tabela de funções virtuais da classe Numero_t *
@@ -240,9 +240,9 @@ Matriz_pt Matriz_2d_criar (Matriz_pt  me, unsigned int * tam, double * mat) {
 
 
 
-/*----------------------------------------------------*
+/*----------------------------------------------*
  * IMPLEMENTAÇÃO DAS FUNÇÕES VIRTUAIS           *
- * -----------------------------------------------------*/
+ * ---------------------------------------------*/
 
 static Matriz_pt Copia_(Matriz_t const *const me){
 	return ((Matriz_pt) Matriz_copia_ ((Numero_pt) me));
@@ -263,8 +263,13 @@ static Matriz_pt Atribui_(Matriz_t const *const me, Matriz_t *const outro){
 	return ((Matriz_pt) Matriz_atribui_ ((Numero_pt) me, (Numero_pt)outro));
 }
 static Numero_pt Matriz_atribui_(Numero_t const *const me, Numero_t *const outro){
-	/* Somente pra matrizes de tamanhos iguais */
-
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return outro;
+	}
+	
 	unsigned int * tam = Get_tamanho_((Matriz_pt)me);
 	double * valores = Get_valores_((Matriz_pt)me);
 
@@ -280,10 +285,14 @@ static Matriz_pt Soma_(Matriz_t const *const me, Matriz_t const *const outro, Ma
 	return ((Matriz_pt) Matriz_soma_ ((Numero_pt) me, (Numero_pt) outro, (Numero_pt) res));
 }
 static Numero_pt Matriz_soma_(Numero_t const *const me, Numero_t const *const outro, Numero_t *const res){
-	int i, j;
-	
-	if ( ((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0]) assert(0);
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
 
+	int i, j;
 	for(i=0; i < ((Matriz_pt)me)->tam[0];i++){
 		for(j=0; j < ((Matriz_pt)me)->tam[1];j++){
 			((Matriz_pt)res)->mat[i][j] =  ((Matriz_pt)me)->mat[i][j] + ((Matriz_pt)outro)->mat[i][j];
@@ -297,10 +306,15 @@ static Matriz_pt Subt_(Matriz_t const *const me, Matriz_t const *const outro, Ma
 	return ((Matriz_pt) Matriz_subt_ ((Numero_pt) me, (Numero_pt) outro, (Numero_pt) res));
 }
 static Numero_pt Matriz_subt_(Numero_t const *const me, Numero_t const *const outro, Numero_t *const res){
-	int i, j;
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
 	
-	if ( ((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0]) assert(0);
 
+	int i, j;
 	for(i=0; i < ((Matriz_pt)me)->tam[0];i++){
 		for(j=0; j < ((Matriz_pt)me)->tam[1];j++){
 			((Matriz_pt)res)->mat[i][j] =  ((Matriz_pt)me)->mat[i][j] - ((Matriz_pt)outro)->mat[i][j];
@@ -314,15 +328,18 @@ static Matriz_pt Mult_(Matriz_t const *const me, Matriz_t const *const outro, Ma
 	return ((Matriz_pt) Matriz_mult_ ((Numero_pt) me, (Numero_pt) outro, (Numero_pt) res));
 }
 static Numero_pt Matriz_mult_(Numero_t const *const me, Numero_t const *const outro, Numero_t *const res){
-	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] || ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
-		printf("\nNao eh possivel multiplicar essas matrizes! (tamanhos diferentes)\n");
-	} else {
-		int i, j;
-		/* Algorítmo de multiplicação de matrizes */
-		for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
-			for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
-				((Matriz_pt)res)->mat[i][j] = ((Matriz_pt)me)->mat[i][j] * ((Matriz_pt)outro)->mat[i][j];
-			}
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
+
+	int i, j;
+	/* Algorítmo de multiplicação de matrizes */
+	for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
+		for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
+			((Matriz_pt)res)->mat[i][j] = ((Matriz_pt)me)->mat[i][j] * ((Matriz_pt)outro)->mat[i][j];
 		}
 	}
 
@@ -333,17 +350,37 @@ static Matriz_pt Divd_(Matriz_t const *const me, Matriz_t const *const outro, Ma
 	return ((Matriz_pt) Matriz_divd_ ((Numero_pt) me, (Numero_pt) outro, (Numero_pt) res));
 }
 static Numero_pt Matriz_divd_(Numero_t const *const me, Numero_t const *const outro, Numero_t *const res){
-	//divide
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
+	
+	int i, j;
+	/* Algorítmo de multiplicação de matrizes */
+	for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
+		for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
+			if (!((Matriz_pt)outro)->mat[i][j]) ((Matriz_pt)res)->mat[i][j] = 0;
+			else ((Matriz_pt)res)->mat[i][j] = ((Matriz_pt)me)->mat[i][j] / ((Matriz_pt)outro)->mat[i][j];
+		}
+	}
+
+	return (Numero_pt) res;
 }
 
 static Matriz_pt Ac_Soma_(Matriz_t *const me, Matriz_t const *const outro){
 	return ((Matriz_pt) Matriz_ac_soma_ ((Numero_pt) me, (Numero_pt) outro));
 }
 static Numero_pt Matriz_ac_soma_(Numero_t *const me, Numero_t const *const outro){
-	int i, j;
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
 	
-	if ( ((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0]) assert(0);
-
+	int i, j;
 	for(i=0; i < ((Matriz_pt)me)->tam[0];i++){
 		for(j=0; j < ((Matriz_pt)me)->tam[1];j++){
 			((Matriz_pt)outro)->mat[i][j] =  ((Matriz_pt)me)->mat[i][j] + ((Matriz_pt)outro)->mat[i][j];
@@ -357,10 +394,14 @@ static Matriz_pt Ac_Subt_(Matriz_t *const me, Matriz_t const *const outro){
 	return ((Matriz_pt) Matriz_ac_subt_ ((Numero_pt) me, (Numero_pt) outro));
 }
 static Numero_pt Matriz_ac_subt_(Numero_t *const me, Numero_t const *const outro){
-	int i, j;
-	
-	if ( ((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0]) assert(0);
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
 
+	int i, j;
 	for(i=0; i < ((Matriz_pt)me)->tam[0];i++){
 		for(j=0; j < ((Matriz_pt)me)->tam[1];j++){
 			((Matriz_pt)outro)->mat[i][j] =  ((Matriz_pt)me)->mat[i][j] - ((Matriz_pt)outro)->mat[i][j];
@@ -374,15 +415,17 @@ static Matriz_pt Ac_Mult_(Matriz_t *const me, Matriz_t const *const outro){
 	return ((Matriz_pt) Matriz_ac_mult_ ((Numero_pt) me, (Numero_pt) outro));
 }
 static Numero_pt Matriz_ac_mult_(Numero_t *const me, Numero_t const *const outro){
-if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] || ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
-		printf("\nNao eh possivel multiplicar essas matrizes! (tamanhos diferentes)\n");
-	} else {
-		int i, j;
-		/* Algorítmo de multiplicação de matrizes */
-		for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
-			for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
-				((Matriz_pt)outro)->mat[i][j] = ((Matriz_pt)me)->mat[i][j] * ((Matriz_pt)outro)->mat[i][j];
-			}
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
+
+	int i, j;
+	for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
+		for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
+			((Matriz_pt)outro)->mat[i][j] = ((Matriz_pt)me)->mat[i][j] * ((Matriz_pt)outro)->mat[i][j];
 		}
 	}
 
@@ -393,27 +436,50 @@ static Matriz_pt Ac_Divd_(Matriz_t *const me, Matriz_t const *const outro){
 	return ((Matriz_pt) Matriz_ac_divd_ ((Numero_pt) me, (Numero_pt) outro));
 }
 static Numero_pt Matriz_ac_divd_(Numero_t *const me, Numero_t const *const outro){
-	//divide acumulada
+	if (((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] ||
+		 ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) {
+		
+		printf("Impossível realizar essa operação (tamanhos incompatíveis)");
+		return (Numero_pt)outro;
+	}
+	
+	int i, j;
+	for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
+		for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
+			if (!((Matriz_pt)outro)->mat[i][j]) ((Matriz_pt)outro)->mat[i][j] = 0;
+			else ((Matriz_pt)outro)->mat[i][j] = ((Matriz_pt)me)->mat[i][j] / ((Matriz_pt)outro)->mat[i][j];
+		}
+	}
+
+	return (Numero_pt) outro;
 }
 
 static int Compara_(Matriz_t const *const me, Matriz_t const *const outro){
 	return (Matriz_compara_ ((Numero_pt) me, (Numero_pt) outro));
 }
 static int Matriz_compara_(Numero_t const *const me, Numero_t const *const outro){
+	/* 
+	OUTPUT DESSA FUNÇÃO:
+		0 	= IGUAIS
+		1 	= TAMANHOS DIFERENTES E/OU VALORES DIFERENTES
+		-1 	= VALORES DIFERENTES 
+	*/
+	
 	int i, j;
-	if ( ((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0]) return 0;
+	if ( ((Matriz_pt)me)->tam[0] != ((Matriz_pt)outro)->tam[0] || ((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[1]) return 1;
 
 	for(i=0; i < ((Matriz_pt)me)->tam[0];i++){
 		for(j=0; j < ((Matriz_pt)me)->tam[1];j++){
-			if (((Matriz_pt)me)->mat[i][j] != ((Matriz_pt)outro)->mat[i][j]) return 0;
+			if (((Matriz_pt)me)->mat[i][j] != ((Matriz_pt)outro)->mat[i][j]) return -1;
 		}
 	}
-	return 1;
+	
+	return 0;
 }
 
 
 /*---------------------------------------------*
-*        getters e setters                     *
+* GETTERS E SETTERS				                     *
 * ---------------------------------------------*/
 
 static unsigned int * Get_tamanho_ (Matriz_t const * const me){
@@ -466,7 +532,7 @@ static void Set_valores_ (Matriz_t const * me, double * valores){
 
 
 /*---------------------------------------------*
-*        funções avançadas                     *
+* FUNÇÕES AVANÇADAS				                     *
 * ---------------------------------------------*/
 
 static inline Matriz_pt Resize_ (Matriz_t * const me,  unsigned int *tam) {
@@ -525,236 +591,37 @@ static inline Matriz_pt Resize_ (Matriz_t * const me,  unsigned int *tam) {
 }
 
 static inline Matriz_pt Ones_ (Matriz_pt me, unsigned int *tam) {
-	/* tabela de funções virtuais da classe Numero_t *
-	* Esta tabela estática será compartilhada por todos os números *
-	* da classe Matriz_t                                        */
+	int i, j;
+	double * val = (double*) malloc(tam[0] * tam[1] * sizeof(double));
+	for(i=0;i<tam[0]*tam[1];i++) val[i] = 1;
 
-	static struct NumeroVtbl const vtbl = {
-		&Matriz_copia_,
-		&Matriz_atribui_,
-		&Matriz_soma_,
-		&Matriz_subt_,
-		&Matriz_mult_,
-		&Matriz_divd_,
-		&Matriz_ac_soma_,
-		&Matriz_ac_subt_,
-		&Matriz_ac_mult_,
-		&Matriz_ac_divd_,
-		&Matriz_compara_,
-		&Matriz_imprime_,
-		&Matriz_destroi_
-	};
+	me = Matriz_2d_criar(me, tam, val);
 
-	// me = (Matriz_pt) Num_constroi ((Numero_pt) me);
-	me = (Matriz_pt) malloc(sizeof(Matriz_t));
-	/* constroi o Numero_t  	*/
-	/* no início de Matriz_t  */
-
-	me->super.metodo = &vtbl;
-	/* as operações do "numero", a partir de agora, */
-	/* são as operações sobre matrizes              */
-	/* metodo aponta para vtbl de Matriz_t 					*/
-
-	/* Agora, mais uma tabela estática a ser compartilhada pelos     *
-	* "Matriz_t": a tabela de interface                          */
-	static struct Matriz_Interface_st const interface = {
-		&Copia_,
-		&Atribui_,
-		&Soma_,
-		&Subt_,
-		&Mult_,
-		&Divd_,
-		&Ac_Soma_,
-		&Ac_Subt_,
-		&Ac_Mult_,
-		&Ac_Divd_,
-		&Compara_,
-		&Imprime_,
-		&Destroi_,
-		&Resize_,
-		&Ones_,
-		&Identidade_,
-		&Multip_escalar_,
-		&Dot_,
-		&Transpor_,
-		&Transpor_diag2_,
-		&Reverse_horizontal_,
-		&Reverse_vertical_,
-		&Acrescenta_linha_,
-		&Acrescenta_coluna_,
-		&Remove_linha_,
-		&Remove_coluna_,
-		&Inversa_,
-		&Get_tamanho_,
-		&Get_valores_,
-		&Set_tamanho_,
-		&Set_valores_,
-	};
-
-	me->Metodo = &interface;
-	/* metodo aponta para vtbl de Matriz_t */
-	/* as operações do "numero", a partir de agora */
-	/* são as operações sobre matriz */
-
-	/* aloca dinamicamente uma area de memoria para o tamanho da matriz  */
-	/* e atribui o endereço de memória alocada para o ponteiro */
-	/* valor que está dentro da estrutura Matriz_st */
-	me->tam = (unsigned int *) malloc (2*sizeof(unsigned int));
-	if (me->tam == NULL)
-	{	/*erro!!! não conseguiu alocar */
-		printf ("Erro na alocação de memória em Matriz_2d_criar");
-		printf ("Nao alocou os valores unsigned int do tamanho da matriz");
-		exit (1);
-	}
-	me->tam[0] = tam[0];
-	me->tam[1] = tam[1];
-
-	/* aloca dinamicamente uma area de memoria para os valores da matriz  */
-	/* e atribui o endereço de memória alocada para o ponteiro */
-	/* valor que está dentro da estrutura Matriz_st */
-	me->mat = (double **) malloc (tam[0] * sizeof(double *));
-
-	if (me->mat == NULL)
-	{	/*erro!!! não conseguiu alocar */
-		printf ("Erro na alocação de memória em Matriz_2d_criar");
-		printf ("Nao alocou os valores de me->mat");
-		exit (1);
-	}
-
-	int i, j, k=0;
-	for (i = 0; i < tam[0]; i++) {
-		me->mat[i] = (double *) malloc (tam[1] * sizeof(double));
-		if (me->mat[i] == NULL)
-		{	/*erro!!! não conseguiu alocar */
-			printf ("Erro na alocação de memória em Matriz_2d_criar");
-			printf ("Nao alocou os valores de me->mat[%d]", i);
-			exit (1);
-		}
-		
-		for(j=0;j<tam[1];j++){
-			me->mat[i][j] = 1;
-		}
-	}
-
+	free(val);
 	return (me);
 }
 
 static inline Matriz_pt Identidade_ (Matriz_pt me, unsigned int *tam) {
-	/* tabela de funções virtuais da classe Numero_t *
-	* Esta tabela estática será compartilhada por todos os números *
-	* da classe Matriz_t                                        */
+	int i, j;
+	
+	if (tam[0] != tam[1]) printf("\nERRO! Matriz Identidade com tamanho não-quadrado!\n");
+	double * val = (double*) malloc(tam[0] * tam[1] * sizeof(double));
 
-	static struct NumeroVtbl const vtbl = {
-		&Matriz_copia_,
-		&Matriz_atribui_,
-		&Matriz_soma_,
-		&Matriz_subt_,
-		&Matriz_mult_,
-		&Matriz_divd_,
-		&Matriz_ac_soma_,
-		&Matriz_ac_subt_,
-		&Matriz_ac_mult_,
-		&Matriz_ac_divd_,
-		&Matriz_compara_,
-		&Matriz_imprime_,
-		&Matriz_destroi_
-	};
+	for(i=0;i<tam[0]*tam[1];i++){
+		if (!i) val[i] = 1;
+		else {
+			float RestoDivis = (float)i/((float)tam[0]+1);
+			RestoDivis -= (int)RestoDivis;
+			int EhMultiplo = !RestoDivis?1:0;
 
-	// me = (Matriz_pt) Num_constroi ((Numero_pt) me);
-	me = (Matriz_pt) malloc(sizeof(Matriz_t));
-	/* constroi o Numero_t  	*/
-	/* no início de Matriz_t  */
-
-	me->super.metodo = &vtbl;
-	/* as operações do "numero", a partir de agora, */
-	/* são as operações sobre matrizes              */
-	/* metodo aponta para vtbl de Matriz_t 					*/
-
-	/* Agora, mais uma tabela estática a ser compartilhada pelos     *
-	* "Matriz_t": a tabela de interface                          */
-	static struct Matriz_Interface_st const interface = {
-		&Copia_,
-		&Atribui_,
-		&Soma_,
-		&Subt_,
-		&Mult_,
-		&Divd_,
-		&Ac_Soma_,
-		&Ac_Subt_,
-		&Ac_Mult_,
-		&Ac_Divd_,
-		&Compara_,
-		&Imprime_,
-		&Destroi_,
-		&Resize_,
-		&Ones_,
-		&Identidade_,
-		&Multip_escalar_,
-		&Dot_,
-		&Transpor_,
-		&Transpor_diag2_,
-		&Reverse_horizontal_,
-		&Reverse_vertical_,
-		&Acrescenta_linha_,
-		&Acrescenta_coluna_,
-		&Remove_linha_,
-		&Remove_coluna_,
-		&Inversa_,
-		&Get_tamanho_,
-		&Get_valores_,
-		&Set_tamanho_,
-		&Set_valores_,
-	};
-
-	me->Metodo = &interface;
-	/* metodo aponta para vtbl de Matriz_t */
-	/* as operações do "numero", a partir de agora */
-	/* são as operações sobre matriz */
-
-	/* aloca dinamicamente uma area de memoria para o tamanho da matriz  */
-	/* e atribui o endereço de memória alocada para o ponteiro */
-	/* valor que está dentro da estrutura Matriz_st */
-	me->tam = (unsigned int *) malloc (2*sizeof(unsigned int));
-	if (me->tam == NULL)
-	{	/*erro!!! não conseguiu alocar */
-		printf ("Erro na alocação de memória em Matriz_2d_criar");
-		printf ("Nao alocou os valores unsigned int do tamanho da matriz");
-		exit (1);
-	}
-	me->tam[0] = tam[0];
-	me->tam[1] = tam[1];
-
-	/* aloca dinamicamente uma area de memoria para os valores da matriz  */
-	/* e atribui o endereço de memória alocada para o ponteiro */
-	/* valor que está dentro da estrutura Matriz_st */
-	me->mat = (double **) malloc (tam[0] * sizeof(double *));
-
-	if (me->mat == NULL)
-	{	/*erro!!! não conseguiu alocar */
-		printf ("Erro na alocação de memória em Matriz_2d_criar");
-		printf ("Nao alocou os valores de me->mat");
-		exit (1);
-	}
-
-	int i, j, k=0;
-	for (i = 0; i < tam[0]; i++) {
-		me->mat[i] = (double *) malloc (tam[1] * sizeof(double));
-		if (me->mat[i] == NULL)
-		{	/*erro!!! não conseguiu alocar */
-			printf ("Erro na alocação de memória em Matriz_2d_criar");
-			printf ("Nao alocou os valores de me->mat[%d]", i);
-			exit (1);
-		}
-		
-		for (j = 0; j < tam[1]; j++) {
-			if (i == j) {
-				me->mat[i][j] = 1;
-			} else {
-				me->mat[i][j] = 0;
-			}
+			if (EhMultiplo) val[i] = 1;
+			else val[i] = 0;
 		}
 	}
 
+	me = Matriz_2d_criar(me, tam, val);
+
+	free(val);
 	return (me);
 }
 
@@ -765,35 +632,36 @@ static inline Matriz_pt Multip_escalar_ (Matriz_t * const me, double escalar) {
 			me->mat[i][j] *= 2;
 		}
 	}
-	return (Matriz_pt) me;
+	return me;
 }
 
-static inline Matriz_pt Dot_ (Matriz_t const *  me, Matriz_t const * const outro) {
+static inline Matriz_pt Dot_ (Matriz_t *  me, Matriz_t const * const outro) {
 	Matriz_t * res = NULL;
 	res = me->Metodo->copia(me);
 	
-	if (((Matriz_pt)me)->tam[1] != ((Matriz_pt)outro)->tam[0]) {
+	if (me->tam[1] != outro->tam[0]) {
 		printf("\nNao eh possivel multiplicar essas matrizes!\n");
 		printf("O numero de colunas da primeira tem que ser igual ao numero de linhas da segunda!\n");
+		res->Metodo->destroi(res);
 	} else {
 
 		int i, j, k, m=0;
 		double somaProd;
 		
 		unsigned int * tam = (unsigned int*) malloc(2*sizeof(unsigned int));
-		tam[0] = ((Matriz_pt)me)->tam[0];
-		tam[1] = ((Matriz_pt)outro)->tam[1];
-		Set_tamanho_((Matriz_pt)res, tam);
+		tam[0] = me->tam[0];
+		tam[1] = outro->tam[1];
+		Set_tamanho_(res, tam);
 		double * valores = (double*)malloc(tam[0]*tam[1]*sizeof(double));
 		free(tam);
 
 		/* Algorítmo de multiplicação de matrizes */
-		for (i = 0; i < ((Matriz_pt)me)->tam[0]; i++) {
-			for (j = 0; j < ((Matriz_pt)outro)->tam[1]; j++) {
+		for (i = 0; i < me->tam[0]; i++) {
+			for (j = 0; j < outro->tam[1]; j++) {
 				somaProd = 0;
 			
-				for (k = 0; k < ((Matriz_pt)me)->tam[1]; k++) {
-					somaProd += ((Matriz_pt)me)->mat[i][k] * ((Matriz_pt)outro)->mat[k][j];
+				for (k = 0; k < me->tam[1]; k++) {
+					somaProd += me->mat[i][k] * outro->mat[k][j];
 				}
 				valores[m] = (double)somaProd;
 				m++;
@@ -805,8 +673,10 @@ static inline Matriz_pt Dot_ (Matriz_t const *  me, Matriz_t const * const outro
 		free(valores);
 	}
 
-	
-	return (Matriz_pt) res;
+	me = res->Metodo->copia(res);
+	res->Metodo->destroi(res);
+
+	return me;
 }
 
 static inline Matriz_pt Transpor_ (Matriz_t * const  me) {
@@ -825,29 +695,33 @@ static inline Matriz_pt Transpor_ (Matriz_t * const  me) {
 
 	aux->Metodo->destroi(aux);
 
-	return (Matriz_pt) me;
+	return me;
 }
 
-static inline Matriz_pt Transpor_diag2_ (Matriz_t const * const  me) {
-	// transpor em relação à diagonal secundária
-}
-
-static inline Matriz_pt Reverse_horizontal_ (Matriz_t * const  me) {
+static inline Matriz_pt Transpor_diag2_ (Matriz_t * const  me) {
 	Matriz_t * aux = NULL;
 	aux = me->Metodo->copia(me);
 
-	int i, j, m, n;
-	for (i = 0, m = (me->tam[0])-1; i < me->tam[0]; i++, m--) {
-		for (j = 0, n = 0; j < me->tam[1]; j++, n++) {
-			me->mat[i][j] = aux->mat[m][n];
+	int novoTam[] = { me->tam[1], me->tam[0] };
+	Resize_(me, novoTam);
+
+	
+	int i, j, k=0, l=0;
+	for (i = me->tam[0]-1; i >= 0; i--) {
+		for (j = me->tam[1]-1; j >= 0; j--) {
+			me->mat[k][l] = aux->mat[i][j];
+			k++;
 		}
+		l++;
+		k=0;
 	}
+
 	aux->Metodo->destroi(aux);
 
-	return (Matriz_pt) me;
+	return me;
 }
 
-static inline Matriz_pt Reverse_vertical_ (Matriz_t * const  me) {
+static inline Matriz_pt Reverse_horizontal_ (Matriz_t * const  me) {
 	Matriz_t * aux = NULL;
 	aux = me->Metodo->copia(me);
 
@@ -863,23 +737,38 @@ static inline Matriz_pt Reverse_vertical_ (Matriz_t * const  me) {
 	return (Matriz_pt) me;
 }
 
+static inline Matriz_pt Reverse_vertical_ (Matriz_t * const  me) {
+	Matriz_t * aux = NULL;
+	aux = me->Metodo->copia(me);
+
+	int i, j, m, n;
+	for (i = 0, m = (me->tam[0])-1; i < me->tam[0]; i++, m--) {
+		for (j = 0, n = 0; j < me->tam[1]; j++, n++) {
+			me->mat[i][j] = aux->mat[m][n];
+		}
+	}
+	aux->Metodo->destroi(aux);
+
+	return (Matriz_pt) me;
+}
+
 static inline Matriz_pt Acrescenta_linha_ (Matriz_t * const  me) {
 	int novoTam[] = { (me->tam[0])+1, me->tam[1] };
 	Resize_(me, novoTam);
-	return (Matriz_pt) me;
+	return me;
 }
 
 static inline Matriz_pt Acrescenta_coluna_ (Matriz_t * const  me){
 	int novoTam[] = { me->tam[0], (me->tam[1])+1 };
 	Resize_(me, novoTam);
-	return (Matriz_pt) me;
+	return me;
 }
 
 static inline Matriz_pt Remove_linha_ (Matriz_t * const  me) {
 	if (me->tam[0]!=1) {
 		int novoTam[] = { (me->tam[0])-1, me->tam[1] };
 		Resize_(me, novoTam);
-		return (Matriz_pt) me;
+		return me;
 	} else {
 		printf("Impossível remover linha de matriz com linha unitária");
 	}
@@ -889,19 +778,133 @@ static inline Matriz_pt Remove_coluna_ (Matriz_t * const  me){
 	if (me->tam[0]!=1) {
 		int novoTam[] = { me->tam[0], (me->tam[1])-1 };
 		Resize_(me, novoTam);
-		return (Matriz_pt) me;
+		return me;
 	} else {
 		printf("Impossível remover linha de matriz com linha unitária");
 	}
 }
 
 static inline Matriz_pt Inversa_ (Matriz_t * const  me){
-	//INVERSA
+	void destroiVetorLocal(double ** vector, double order){
+		int i;
+		for(i=0;i<order;i++) if (vector[i] != NULL) free(vector[i]);
+
+		if (vector!=NULL) free(vector);
+	}
+
+	double determinant(double ** a, double k){
+		double s = 1, det = 0;
+		int i, j, m, n, c, exit=0;
+		
+		double ** b = (double**)malloc(k*sizeof(double*));
+		for(i=0;i<k;i++) b[i] = (double*)malloc(k*sizeof(double));
+
+		// if (k == 1) return (a[0][0]);
+		if (k==1) exit=1;
+		else {
+			det = 0;
+			for (c = 0; c < k; c++){
+				m = 0;
+				n = 0;
+
+				for (i = 0;i < k; i++){
+					for (j = 0 ;j < k; j++){
+						b[i][j] = 0;
+						if (i != 0 && j != c){
+							b[m][n] = a[i][j];
+							if (n < (k - 2)) n++;
+							else {
+								n = 0;
+								m++;
+							}
+						}
+					}
+				}
+
+				det = det + s * (a[0][c] * determinant(b, k - 1));
+				s = -1 * s;
+				
+			}
+		}
+
+		destroiVetorLocal(b, k);
+		if (exit) return a[0][0];
+		
+		return (det);
+	}
+
+	double ** transpose(double ** num, double ** fac, double r){
+		int i, j;
+		double d;
+		
+		double ** b = (double**)malloc(r*sizeof(double*));
+		for(i=0;i<r;i++) b[i] = (double*)malloc(r*sizeof(double));
+	
+		for (i = 0;i < r; i++) {
+			for (j = 0;j < r; j++){
+				b[i][j] = fac[j][i];
+			}
+		}
+
+		d = determinant(num, r);
+		for (i = 0;i < r; i++) for (j = 0;j < r; j++) num[i][j] = b[i][j] / d;
+
+		destroiVetorLocal(b, r);
+
+		return num;
+	}
+	
+	double ** cofactor(double ** num, double f){
+		int p, q, m, n, i, j;
+
+		double ** b = (double**)malloc(f*sizeof(double*));
+		for(i=0;i<f;i++) b[i] = (double*)malloc(f*sizeof(double));
+
+		double ** fac = (double**)malloc(f*sizeof(double*));
+		for(i=0;i<f;i++) fac[i] = (double*)malloc(f*sizeof(double));
+		
+		for (q = 0;q < f; q++) {
+			for (p = 0;p < f; p++){
+				m = 0;
+				n = 0;
+				for (i = 0;i < f; i++){
+					for (j = 0;j < f; j++){
+						if (i != q && j != p){
+							b[m][n] = num[i][j];
+							if (n < (f - 2)) n++;
+							else {
+								n = 0;
+								m++;
+							}
+						}
+					}
+				}
+				fac[q][p] = pow(-1, q + p) * determinant(b, f - 1);
+			}
+		}
+
+
+		num = transpose(num, fac, f);
+
+		destroiVetorLocal(b, f);
+		destroiVetorLocal(fac, f);
+
+		return num;
+	}
+
+  double d;
+  int i, j, order=3;
+
+  d = determinant(me->mat, order);
+  if (d == 0) printf("\nImpossível calcular inversa dessa matriz (determinante == 0)\n");
+  else me->mat = cofactor(me->mat, order);
+
+  return me;
 }
 
 
 /*---------------------------------------------*
-* implementação da impressão                   *
+* IMPLEMENTAÇÃO DA IMPRESSÃO                   *
 * ---------------------------------------------*/
 
 static inline char * Imprime_  ( Matriz_t const * const  me) {
@@ -915,16 +918,18 @@ static inline char * Matriz_imprime_  (Numero_t const * const  me) {
 		printf("\n\t");
 		for (j = 0; j < ((Matriz_pt) me)->tam[1]; j++) {
 			//isso é para deixar formatado certinho quando estamos lidando com 
-			//numeros muito grandes em modulo
+			//numeros muito grandes em modulo (muitos caracteres na tela)
 			if (((Matriz_pt) me)->mat[i][j] > 999 || ((Matriz_pt) me)->mat[i][j] < -999) printf("%.2lf \t", ((Matriz_pt) me)->mat[i][j]);
 			else printf("%.2lf\t\t", ((Matriz_pt) me)->mat[i][j]);
 		}
 	}
 	printf("\n}\n");
+	
+	return "";
 }
 
 /*---------------------------------------------*
-* implementação do destrutor                   *
+* IMPLEMENTAÇÃO DO DESTRUTOR                   *
 * ---------------------------------------------*/
 
 static inline void Destroi_  (Matriz_t * me) {
